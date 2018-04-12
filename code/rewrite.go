@@ -17,6 +17,7 @@ package code
 import (
 	"bufio"
 	"io"
+	"os/exec"
 	"strings"
 	"unicode"
 )
@@ -115,7 +116,13 @@ func ToComments(wdst io.Writer, rsrc io.Reader) (fps []*Failpoint, err error) {
 		err = nil
 	}
 	dst.Flush()
+	err = removeDependencies()
 	return
+}
+
+func removeDependencies() error {
+	cmd := exec.Command("goimports", "-w", "$(pwd)")
+	return cmd.Run()
 }
 
 func numBraces(l string) (opening int, closing int) {
